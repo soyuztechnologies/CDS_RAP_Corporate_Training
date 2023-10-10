@@ -1,0 +1,97 @@
+CLASS ZMT_XX_amdp DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    INTERFACES if_amdp_marker_hdb .
+    CLASS-METHODS get_oia EXPORTING value(et_oia) type ztt_oia.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS ZMT_XX_amdp IMPLEMENTATION.
+    METHOD get_oia by DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY
+        USING zdp_cust snwd_bpa snwd_so_inv_head snwd_so_inv_item.
+           DECLARE lv_client varchar(3);
+    declare lv_to_curr_code varchar(4);
+    declare lv_max_amount decimal(10,2);
+    declare lv_max_days integer;
+    declare lv_date date;
+    declare i integer;
+    --Step 1: Read all customizing
+    select mandt as client, currency_code, max_gross_amount, max_open_days, current_date into
+            lv_client, lv_to_curr_code, lv_max_amount, lv_max_days, lv_date
+            from zdp_cust where usrid = ( select ucase(session_context('APPLICATIONUSER')) FROM DUMMY );
+
+    --Step 2: Open days on average since when invoice is open
+    lt_days = select bpa.bp_id, bpa.company_name,
+                     floor(days_between(to_timestamp(LEFT(inv.changed_at, 14), 'YYYYMMDDHHMISS'),
+                                  to_timestamp(localtoutc(now(),'CET')))) as open_days
+                                  from snwd_bpa as bpa inner join snwd_so_inv_head as inv
+                                  on bpa.node_key = inv.buyer_guid
+                                  where inv.payment_status = '';
+
+
+    --Step 3: Get the total open amount which is unpaid by customer
+    lt_amount = select bpa.bp_id, sum(itm.gross_amount) as gross_amount, itm.currency_code
+                        from snwd_so_inv_item as itm inner join snwd_so_inv_head as inv
+                        on itm.parent_key = inv.node_key inner join snwd_bpa as bpa
+                        on bpa.node_key = inv.buyer_guid where
+                        inv.payment_status = '' group by bpa.bp_id, itm.currency_code;
+
+    --Currency conversion
+    lt_open_amount = CE_CONVERSION(:lt_amount, [
+                                                    family = 'currency',
+                                                    method = 'ERP',
+                                                    steps = 'shift,convert,shift_back',
+                                                    client = :lv_client,
+                                                    source_unit_column = "CURRENCY_CODE",
+                                                    target_unit = lv_to_curr_code,
+                                                    reference_date = lv_date,
+                                                    schema = "SAPHANADB",
+                                                    output_unit_column = "CONV_CURRENCY_CODE"
+                                                ], [gross_amount]);
+
+    --Join open days and amount data by aggregating
+    spiderman = select dats.bp_id, dats.company_name, avg(dats.open_days) as open_days,
+                    sum(amt.gross_amount) as gross_amount,
+                    amt.CONV_CURRENCY_CODE
+                from :lt_days as dats inner join :lt_open_amount as amt
+                on dats.bp_id = amt.bp_id
+                group by dats.bp_id, dats.company_name, amt.CONV_CURRENCY_CODE;
+
+    --calculate tagging and return data out
+    et_oia = select bp_id, company_name, open_days,
+                    gross_amount, CONV_CURRENCY_CODE as currency_code,
+                    case
+                        when open_days > :lv_max_days and
+                            gross_amount > :lv_max_amount then 'X'
+                        else '' end as tagging from :spiderman;
+     ENDMETHOD.
+ENDCLASS.
+
+
+
+*&---------------------------------------------------------------------*
+*& Report ZMT_XX_call_amdp
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZMT_XX_call_amdp.
+
+
+
+ZMT_XX_amdp=>get_oia(
+  IMPORTING
+    et_oia = data(itab)
+).
+
+cl_demo_output=>display_data(
+  value   = itab
+*  name    =
+*  exclude =
+*  include =
+).
+
