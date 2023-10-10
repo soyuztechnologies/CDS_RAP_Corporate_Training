@@ -81,7 +81,7 @@ define view entity ZMT_XX_CDS_AGG as select from snwd_so {
     sizeCategory: #S,
     dataClass: #MIXED
 }
-define view entity ZMT_XX_JOIN_ASSO as select from ZMT_XX_BASIC_BP(p_type: '01') as cust 
+define view entity ZMT_XX_JOIN as select from ZMT_XX_BASIC_BP(p_type: '01') as cust 
 inner join ZMT_XX_CDS_AGG as sales on
 cust.NodeKey = sales.CustomerGuid
 {
