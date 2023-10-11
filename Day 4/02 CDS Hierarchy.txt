@@ -1,0 +1,61 @@
+@AbapCatalog.sqlViewName: 'ZIMT_XXEMPMGR'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Employee Manager self join'
+define view ZI_MT_XX_EMP_MGR as select from zoft_emp_mgr 
+association[1..*] to ZI_MT_XX_EMP_MGR as _Manager on
+$projection.Managerid = _Manager.Empid
+{
+    key zoft_emp_mgr.empid as Empid,
+    key zoft_emp_mgr.empname as Empname,
+    zoft_emp_mgr.managerid as Managerid,
+    zoft_emp_mgr.costcenter as Costcenter,
+    _Manager
+}
+
+
+
+define hierarchy ZH_MT_XX_EMP_MGR 
+  as parent child hierarchy (
+    source ZI_MT_XX_EMP_MGR
+    child to parent association _Manager
+    siblings order by Empname ascending
+  )
+{
+    Empid,
+    Empname,
+    Managerid,
+    Costcenter,
+    $node.node_id as nodeid,
+    $node.parent_id as parentid,
+    $node.hierarchy_is_cycle as isCycle,
+    $node.hierarchy_is_orphan as isOrphan,
+    $node.hierarchy_level as LevelId,
+    $node.hierarchy_parent_rank as ParentRank,
+    $node.hierarchy_rank as nodeRank,
+    $node.hierarchy_tree_size as TreeSize 
+}
+
+
+
+*&---------------------------------------------------------------------*
+*& Report zMT_XX_use_hier
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zMT_XX_use_hier.
+
+PARAMETERS p_mgr TYPE zoft_emp_mgr-managerid.
+
+SELECT * FROM HIERARCHY_DESCENDANTS( source ZH_MT_XX_EMP_MGR
+                                     START WHERE Managerid = @p_mgr
+ ) into table @data(itab).
+
+ cl_demo_output=>display_data(
+   EXPORTING
+     value   = itab
+*     name    =
+*     exclude =
+*     include =
+ ).

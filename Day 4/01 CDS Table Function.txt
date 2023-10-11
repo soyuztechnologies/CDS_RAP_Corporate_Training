@@ -1,0 +1,72 @@
+
+@AbapCatalog.sqlViewName: 'ZIDBPCRMBUG'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'This will be a buggy cds'
+define view ZI_MT_XX_BPCRM_BUGGY as select from crmd_partner as partner 
+association[1] to but000 as _Bupa 
+on $projection.PartnerNo = _Bupa.partner_guid
+{
+    key partner.client as Client,
+    key partner.partner_guid as PartnerGuid,
+    partner.guid as Guid,
+    partner.compressed as Compressed,
+    partner.attributes as Attributes,
+    partner.kind_of_entry as KindOfEntry,
+    partner.cust_attr_db as CustAttrDb,
+    partner.cust_rel_db as CustRelDb,
+    partner.partner_fct as PartnerFct,
+    partner.partner_no as PartnerNo,
+    _Bupa
+}
+
+
+@EndUserText.label: 'Table function demo for partner data'
+define table function ZI_MT_XX_CDS_TF
+with parameters 
+@Environment.systemField: #CLIENT
+p_clnt : abap.clnt
+returns {
+  client : abap.clnt;
+  partner_no : crmt_partner_no;
+  title: ad_title;
+  namefirst: bu_namep_f;
+  nametext: bu_name1tx;  
+}
+implemented by method zcl_MT_XX_tf=>get_crm_partner_data;
+
+
+
+CLASS zcl_MT_XX_tf DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    INTERFACES if_amdp_marker_hdb .
+    CLASS-METHODS get_crm_partner_data for table FUNCTION ZI_MT_XX_CDS_TF.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zcl_MT_XX_tf IMPLEMENTATION.
+  METHOD get_crm_partner_data by DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT
+  OPTIONS READ-ONLY USING crmd_partner but000
+  .
+    return select t1.client as client,
+                  t1.partner_no,
+                  t2.title, t2.name_first as namefirst,
+                  t2.name1_text as nametext
+                  from crmd_partner as t1
+                  inner join but000 as t2
+                  on t1.client = t2.client and
+                  t1.partner_no = t2.partner_guid
+                  where t1.client = :p_clnt;
+
+  ENDMETHOD.
+
+ENDCLASS.
