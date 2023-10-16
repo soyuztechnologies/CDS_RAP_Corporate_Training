@@ -1,0 +1,24 @@
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Customer'
+@Metadata.ignorePropagatedAnnotations: true
+@ObjectModel.usageType:{
+    serviceQuality: #X,
+    sizeCategory: #S,
+    dataClass: #MIXED
+}
+define view entity ZI_MT_XX_Customer_U_AB as select from /dmo/customer as Customer
+  association [0..1] to I_Country as _Country on $projection.CountryCode = _Country.Country
+{
+  key Customer.customer_id   as CustomerID,
+      Customer.first_name    as FirstName,
+      Customer.last_name     as LastName,
+      Customer.title         as Title,
+      Customer.street        as Street,
+      Customer.postal_code   as PostalCode,
+      Customer.city          as City,
+      Customer.country_code  as CountryCode,
+      Customer.phone_number  as PhoneNumber,
+      Customer.email_address as EmailAddress,
+      _Country
+}
