@@ -7,7 +7,7 @@
     sizeCategory: #S,
     dataClass: #MIXED
 }
-define view entity ZI_MT_XX_Customer_U_AB as select from /dmo/customer as Customer
+define view entity ZI_MT_XX_Customer_U as select from /dmo/customer as Customer
   association [0..1] to I_Country as _Country on $projection.CountryCode = _Country.Country
 {
   key Customer.customer_id   as CustomerID,

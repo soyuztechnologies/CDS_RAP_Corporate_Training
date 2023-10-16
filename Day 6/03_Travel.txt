@@ -8,9 +8,9 @@
     dataClass: #MIXED
 }
 @Metadata.allowExtensions: true
-define root view entity ZI_MT_XX_TRAVEL_U_AB  as select from /dmo/travel as Travel
-  association [0..1] to  ZI_MT_XX_Agency_U_AB   as _Agency   on $projection.AgencyId = _Agency.AgencyID
-  association [0..1] to ZI_MT_XX_Customer_U_AB as _Customer on $projection.CustomerId = _Customer.CustomerID
+define root view entity ZI_MT_XX_TRAVEL_U  as select from /dmo/travel as Travel
+  association [0..1] to  ZI_MT_XX_Agency_U   as _Agency   on $projection.AgencyId = _Agency.AgencyID
+  association [0..1] to ZI_MT_XX_Customer_U as _Customer on $projection.CustomerId = _Customer.CustomerID
   association [0..1] to I_Currency       as _Currency on $projection.CurrencyCode = _Currency.Currency
   association [1..1] to /DMO/I_Travel_Status_VH as _TravelStatus on $projection.Status = _TravelStatus.TravelStatus
 {
