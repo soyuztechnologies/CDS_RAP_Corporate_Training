@@ -1,0 +1,38 @@
+unmanaged implementation in class zbp_i_mt_xx_travel_u unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZI_MT_XX_TRAVEL_U alias Travel
+draft table zabs_travel
+//implementation in class zbp_i_mt_xx_travel_u unique
+etag master LastChangedAt
+lock master
+total etag Lastchangedat
+authorization master ( global )
+{
+
+  create;
+  update;
+  delete;
+
+    draft action Activate;
+    draft action Discard;
+    draft action Resume;
+    draft action Edit;
+    draft determine action Prepare { }
+
+  mapping for /dmo/travel control /dmo/s_travel_intx
+  {
+    AgencyID      = agency_id;
+    BeginDate     = begin_date;
+    BookingFee    = booking_fee;
+    CurrencyCode  = currency_code;
+    CustomerID    = customer_id;
+    EndDate       = end_date;
+    LastChangedAt = lastchangedat;
+    Memo          = description;
+    Status        = status;
+    TotalPrice    = total_price;
+    TravelID      = travel_id;
+  }
+}
