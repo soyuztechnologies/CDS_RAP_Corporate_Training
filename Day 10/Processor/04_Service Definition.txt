@@ -1,0 +1,12 @@
+@EndUserText.label: 'Service definition for managing travels'
+define service ZTRAVEL_Processor_MT_XX {
+  expose ZC_MT_XX_TRAVEL_PROCESSOR as Travel;
+  expose ZC_MT_XX_BOOKING_PROCESSOR as Booking;
+  expose /DMO/I_Customer as Passenger;
+  expose /DMO/I_Agency as TravelAgency;
+  expose /DMO/I_Carrier as Airline;
+  expose /DMO/I_Connection as FlightConnection;
+  expose /DMO/I_Flight as Flight;
+  expose I_Currency as Currency;
+  expose I_Country as Country;
+}
