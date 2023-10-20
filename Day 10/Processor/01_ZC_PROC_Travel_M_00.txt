@@ -23,7 +23,7 @@ define root view entity ZC_MT_XX_TRAVEL_PROCESSOR_M
       lineItem:       [ { position: 10, importance: #HIGH } ],
       identification: [ { position: 10, label: 'Travel ID [1,...,99999999]' } ] }
       @Search.defaultSearchElement: true
-  key travel_id          as TravelID,
+        key  TravelId,
       @UI: {
           lineItem:       [ { position: 20, importance: #HIGH } ],
           identification: [ { position: 20 } ],
@@ -31,7 +31,7 @@ define root view entity ZC_MT_XX_TRAVEL_PROCESSOR_M
       @Consumption.valueHelpDefinition: [{ entity : {name: '/DMO/I_Agency', element: 'AgencyID'  } }]
       @ObjectModel.text.element: ['AgencyName']
       @Search.defaultSearchElement: true
-      agency_id          as AgencyID,
+        AgencyId,
       _Agency.Name       as AgencyName,
       @UI: {
           lineItem:       [ { position: 30, importance: #HIGH } ],
@@ -41,39 +41,39 @@ define root view entity ZC_MT_XX_TRAVEL_PROCESSOR_M
 
       @ObjectModel.text.element: ['CustomerName']
       @Search.defaultSearchElement: true
-      customer_id        as CustomerID,
+      CustomerId,
       _Customer.LastName as CustomerName,
       @UI: {
           lineItem:       [ { position: 40, importance: #MEDIUM } ],
           identification: [ { position: 40 } ] }
-      begin_date         as BeginDate,
+      BeginDate,
 
       @UI: {
           lineItem:       [ { position: 41, importance: #MEDIUM } ],
           identification: [ { position: 41 } ] }
-      end_date           as EndDate,
+       EndDate,
       @UI: {
           identification: [ { position: 42 } ] }
       @Semantics.amount.currencyCode: 'CurrencyCode'
-      booking_fee        as BookingFee,
+       BookingFee,
       @UI: {
           lineItem:       [ { position: 43, importance: #MEDIUM } ],
           identification: [ { position: 43, label: 'Total Price' } ] }
       @Semantics.amount.currencyCode: 'CurrencyCode'
-      total_price        as TotalPrice,
+       TotalPrice,
       @Consumption.valueHelpDefinition: [{entity: {name: 'I_Currency', element: 'Currency' }}]
-      currency_code      as CurrencyCode,
+       CurrencyCode,
       @UI: {
           lineItem:       [ { position: 50, importance: #HIGH },
                             { type: #FOR_ACTION, dataAction: 'createTravelByTemplate', label: 'Create Travel by Template' } ],
           identification: [ { position: 45, label: 'Status [O(Open)|A(Accepted)|X(Canceled)]' } ] }
-      status     as TravelStatus,
+      Status     as TravelStatus,
       @UI: {
           identification:[ { position: 46 } ]  }
-      description        as Description,
+       Memo,
 
       @UI.hidden: true
-      lastchangedat    as LastChangedAt,
+      Lastchangedat    as LastChangedAt,
 
       /* Associations */
       _Booking : redirected to composition child ZC_MT_XX_BOOKING_PROCESSOR_M,

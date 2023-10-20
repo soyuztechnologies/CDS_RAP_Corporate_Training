@@ -6,8 +6,8 @@
                 typeNamePlural: 'Bookings',
                 title: { type: #STANDARD, value: 'BookingID' } } }
 @Search.searchable: true
-define view entity ZC_MT_XX_BOOKING_PROCESSOR
-  as projection on ZI_MT_XX_BOOKING
+define view entity ZC_MT_XX_BOOKING_PROCESSOR_M
+  as projection on ZI_MT_XX_BOOKING_M
 {
       @UI.facet: [ { id:            'Booking',
                      purpose:       #STANDARD,
@@ -15,26 +15,26 @@ define view entity ZC_MT_XX_BOOKING_PROCESSOR
                      label:         'Booking',
                      position:      10 }]
       @Search.defaultSearchElement: true
-  key travel_id     as TravelID,
+  key TravelID,
       @UI: { lineItem:       [ { position: 20, importance: #HIGH } ],
              identification: [ { position: 20 } ] }
       @Search.defaultSearchElement: true
-  key booking_id    as BookingID,
+  key  BookingID,
       @UI: { lineItem:       [ { position: 30, importance: #HIGH } ],
              identification: [ { position: 30 } ] }
-      booking_date  as BookingDate,
+      BookingDate,
 
       @UI: { lineItem:       [ { position: 40, importance: #HIGH } ],
              identification: [ { position: 40 } ] }
       @Consumption.valueHelpDefinition: [{entity: {name: '/DMO/I_Customer', element: 'CustomerID' }}]
       @Search.defaultSearchElement: true
-      customer_id   as CustomerID,
+       CustomerID,
 
       @UI: { lineItem:       [ { position: 50, importance: #HIGH } ],
              identification: [ { position: 50 } ] }
       @Consumption.valueHelpDefinition: [{entity: {name: '/DMO/I_Carrier', element: 'AirlineID' }}]
       @ObjectModel.text.element: ['CarrierName']
-      carrier_id    as CarrierID,
+       CarrierID,
       _Carrier.Name as CarrierName,
 
       @UI: { lineItem:       [ { position: 60, importance: #HIGH } ],
@@ -44,7 +44,7 @@ define view entity ZC_MT_XX_BOOKING_PROCESSOR
                                                                 { localElement: 'CarrierID',    element: 'AirlineID'},
                                                                 { localElement: 'FlightPrice',  element: 'Price'},
                                                                 { localElement: 'CurrencyCode', element: 'CurrencyCode' } ] } ]
-      connection_id as ConnectionID,
+      ConnectionID,
 
       @UI: { lineItem:       [ { position: 70, importance: #HIGH } ],
              identification: [ { position: 70 } ] }
@@ -53,22 +53,22 @@ define view entity ZC_MT_XX_BOOKING_PROCESSOR
                                                                 { localElement: 'CarrierID',    element: 'AirlineID'},
                                                                 { localElement: 'FlightPrice',  element: 'Price' },
                                                                 { localElement: 'CurrencyCode', element: 'CurrencyCode' }]}]
-      flight_date   as FlightDate,
+       FlightDate,
 
       @UI: { lineItem:       [ { position: 80, importance: #HIGH } ],
              identification: [ { position: 80 } ] }
       @Semantics.amount.currencyCode: 'CurrencyCode'
-      flight_price  as FlightPrice,
+       FlightPrice,
 
       @Consumption.valueHelpDefinition: [{entity: {name: 'I_Currency', element: 'Currency' }}]
-      currency_code as CurrencyCode,
+      CurrencyCode,
 
 
       @UI.hidden: true
       lastchangedat as LastChangedAt, -- Take over from parent
 
       /* Associations */
-      _Travel: redirected to parent ZC_MT_XX_TRAVEL_PROCESSOR,
+      _Travel: redirected to parent ZC_MT_XX_TRAVEL_PROCESSOR_M,
       _Customer,
       _Carrier
 
