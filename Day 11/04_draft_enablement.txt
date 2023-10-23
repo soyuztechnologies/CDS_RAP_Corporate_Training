@@ -138,3 +138,32 @@ authorization dependent by _Travel
      CurrencyCode       = currency_code;
   }
 }
+
+
+---Projection layer code
+
+projection;
+strict ( 2 );
+use draft;
+
+define behavior for ZC_MT_XX_TRAVEL_PROCESSOR_M  alias Travel
+{
+  use create;
+  use update;
+  use delete;
+  use action Edit;
+    use action Activate;
+    use action Discard;
+    use action Resume;
+    use action Prepare;
+   use action createTravelByTemplate;
+  use association _Booking { create;  with draft;}
+}
+
+define behavior for ZC_MT_XX_BOOKING_PROCESSOR_M alias Booking
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft;}
+}
