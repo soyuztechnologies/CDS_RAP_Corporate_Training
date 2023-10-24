@@ -6,7 +6,7 @@
 @Metadata.allowExtensions: true
 @Search.searchable: true
 define root view entity ZC_MT_XX_TRAVEL_APPROVER_M
-  as projection on ZI_MT_XX_LAM_TRAVEL_M
+  as projection on ZI_MT_XX_TRAVEL_M
 {
   key TravelId,
       @Consumption.valueHelpDefinition: [{ entity:
@@ -36,7 +36,7 @@ define root view entity ZC_MT_XX_TRAVEL_APPROVER_M
       Lastchangedat,
       /* Associations */
       _Agency,
-      _Bookings : redirected to composition child ZC_MT_XX_BOOKING_APPROVER_M,
+      _Booking : redirected to composition child ZC_MT_XX_BOOKING_APPROVER_M,
       _Currency,
       _Customer
 }

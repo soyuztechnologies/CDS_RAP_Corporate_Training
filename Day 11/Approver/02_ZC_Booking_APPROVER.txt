@@ -10,7 +10,7 @@
 @Search.searchable: true
 @Metadata.allowExtensions: true
 define view entity ZC_MT_XX_BOOKING_APPROVER_M
-  as projection on ZI_MT_XX_LAM_BOOKING_M
+  as projection on ZI_MT_XX_BOOKING_M
 {
   key TravelId,
   key BookingId,
